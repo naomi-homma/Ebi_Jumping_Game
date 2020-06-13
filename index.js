@@ -13,74 +13,87 @@ const GAME_WIDTH = 800;
 const GAME_HEIGHT = 500;
 
 let backImg = document.getElementById("img_back");
-// let gamestate = true;
 let gamestate = false;
-let score = 0;
 
-// ゲームループ関数の作成
-// 情報をアップデートする関数・描画する関数
-// Dinoというオブジェクト？インスタンス？を作り(引数)を渡す
-let dino = new Dino(GAME_WIDTH, GAME_HEIGHT);
-// InputHandlerを実行し、キーボード操作と画面を連動
-new InputHandler(dino);
-let bomb = [];
+let score;
+let bomb;
 
-let lastTime = 0;
+let lastTime;
 
-let counter = 0;
-let interval = 0;
+let counter;
+let interval;
 
-function gameLoop(timestamp){
+      // ゲームループ関数の作成
+      // 情報をアップデートする関数・描画する関数
+      // Dinoというオブジェクト？インスタンス？を作り(引数)を渡す
+      let dino = new Dino(GAME_WIDTH, GAME_HEIGHT);
+      // InputHandlerを実行し、キーボード操作と画面を連動
+      new InputHandler(dino);
 
-  let deltaTime = timestamp - lastTime;
-  lastTime = timestamp;
-  // 背景画像描写
-  ctx.drawImage(backImg, 0, 0, GAME_WIDTH, GAME_HEIGHT)
-
-  // Dinoクラスのdrawメソッドを使いたい場合↓の記述
-  dino.update(deltaTime);
-  dino.draw(ctx);
-
-  counter += deltaTime;
-  if(counter > interval) {
-    bomb.push(new Bomb(GAME_WIDTH, GAME_HEIGHT));
-    counter = 0;
-    // 1～2秒間隔
-    interval = getRandomInt(1000, 1800);
-  }
-
-  // bomb配列に対して要素の追加削除を行う
-  // 永遠に追加されるので、画面外に出たら配列より削除
-  for(var i = bomb.length-1; i >= 0; i--) {
-    bomb[i].update(deltaTime);
-    bomb[i].draw(ctx);
-    if(bomb[i].checkHit(dino.position.x + dino.r, dino.position.y + dino.r, dino.r, bomb[i].position.x + bomb[i].r, bomb[i].position.y + bomb[i].r, bomb[i].r)){
-      var playbomb = bomb[i].audio.play();
-      if(playbomb !== undefined) {
-        playbomb.then(_ => {
-        })
-        .catch(error => {
-          console.log(error);
-        });
-      }
-      console.log("HIT");
-      gamestate = false;
-    }
-    // i番目のbombを1つ取り除く
-    if(bomb[i].offScreen()){
-      score++;
-      bomb.splice(i, 1);
-    }
-    ctx.font = "40px sans-serif";
-    ctx.fillText("Score："+score, 40, 40);
-    if(!gamestate){
-      return;
-    }
-  }
+  function gameLoop(timestamp){
   
+    // 背景画像描写
+    ctx.drawImage(backImg, 0, 0, GAME_WIDTH, GAME_HEIGHT);
+    dino.draw(ctx);
+  
+    window.addEventListener('click', () => {
+      if(gamestate === true) {
+        return;
+      }
+      gamestate = true;
 
+      let score = 0;
+      let bomb = [];
+      let lastTime = 0;
+      let counter = 0;
+      let interval = 0;
+
+      let deltaTime = timestamp - lastTime;
+      lastTime = timestamp;
+
+      // Dinoクラスのdrawメソッドを使いたい場合↓の記述
+    dino.update(deltaTime);
+
+    counter += deltaTime;
+    if(counter > interval) {
+      bomb.push(new Bomb(GAME_WIDTH, GAME_HEIGHT));
+      counter = 0;
+      // 1～2秒間隔
+      interval = getRandomInt(1000, 1800);
+    }
+  
+    // bomb配列に対して要素の追加削除を行う
+    // 永遠に追加されるので、画面外に出たら配列より削除
+    for(var i = bomb.length-1; i >= 0; i--) {
+      bomb[i].update(deltaTime);
+      bomb[i].draw(ctx);
+      if(bomb[i].checkHit(dino.position.x + dino.r, dino.position.y + dino.r, dino.r, bomb[i].position.x + bomb[i].r, bomb[i].position.y + bomb[i].r, bomb[i].r)){
+        var playbomb = bomb[i].audio.play();
+        if(playbomb !== undefined) {
+          playbomb.then(_ => {
+          })
+          .catch(error => {
+            console.log(error);
+          });
+        }
+        console.log("HIT");
+        gamestate = false;
+      }
+      // i番目のbombを1つ取り除く
+      if(bomb[i].offScreen()){
+        score++;
+        bomb.splice(i, 1);
+      }
+      ctx.font = "40px sans-serif";
+      ctx.fillText("Score："+score, 40, 40);
+      if(!gamestate){
+        return;
+      }
+    }
+    requestAnimationFrame(gameLoop);
+  });
+  }
   requestAnimationFrame(gameLoop);
-}
 
-requestAnimationFrame(gameLoop);
+
 
