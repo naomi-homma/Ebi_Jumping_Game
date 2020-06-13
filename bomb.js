@@ -14,6 +14,7 @@ export class Bomb {
     this.audio = new Audio("./punch.mp3");
 
   }
+  // 画面外の障害物をはいてるから削除するメソッド
   offScreen(){
     if(this.position.x <= -this.width){
       return true;
@@ -21,6 +22,7 @@ export class Bomb {
       return false;
     }
   }
+  // 接触判定メソッド⇒四隅判定へ変更
   checkHit(x1, y1, r1, x2, y2, r2) {
     var a = x2 - x1;
     var b = y2 - y1;
