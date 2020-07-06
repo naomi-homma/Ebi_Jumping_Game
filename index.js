@@ -30,6 +30,12 @@ let lastTime = 0;
 let counter = 0;
 let interval = 0;
 
+ctx.drawImage(backImg, 0, 0, GAME_WIDTH, GAME_HEIGHT)
+dino.draw(ctx);
+
+ctx.font = "40px sans-serif";
+ctx.fillText("クリックしてスタート", 40, 40);
+
 function gameLoop(timestamp){
 
   let deltaTime = timestamp - lastTime;
@@ -52,6 +58,7 @@ function gameLoop(timestamp){
   // bomb配列に対して要素の追加削除を行う
   // 永遠に追加されるので、画面外に出たら配列より削除
   for(var i = bomb.length-1; i >= 0; i--) {
+    console.log(i);
     bomb[i].update(deltaTime);
     bomb[i].draw(ctx);
     if(bomb[i].checkHit(dino.position.x + dino.r, dino.position.y + dino.r, dino.r, bomb[i].position.x + bomb[i].r, bomb[i].position.y + bomb[i].r, bomb[i].r)){
@@ -74,13 +81,24 @@ function gameLoop(timestamp){
     ctx.font = "40px sans-serif";
     ctx.fillText("Score："+score, 40, 40);
     if(!gamestate){
+      // falseのままだとclickできてしまう
+      gamestate = true;
+      ctx.font = "40px sans-serif";
+      ctx.fillText("更新ボタンでもう一度チャレンジ♪", 40, 90);
       return;
     }
   }
-  
-
   requestAnimationFrame(gameLoop);
 }
 
-requestAnimationFrame(gameLoop);
+window.addEventListener('click', () => {
+  if (gamestate === true) {
+    return;
+  }
+  gamestate = true;
+  requestAnimationFrame(gameLoop);
+})
+
+
+
 
