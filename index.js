@@ -26,15 +26,17 @@ new InputHandler(dino);
 let bomb = [];
 
 let lastTime = 0;
-
 let counter = 0;
 let interval = 0;
 
 ctx.drawImage(backImg, 0, 0, GAME_WIDTH, GAME_HEIGHT)
 dino.draw(ctx);
 
-ctx.font = "40px sans-serif";
+ctx.font = "30px sans-serif";
+ctx.fillStyle = "white";
 ctx.fillText("クリックしてスタート", 40, 40);
+ctx.fillText("ジャンプして障害物を避けよう！", 40, 80);
+ctx.fillText("ジャンプは↑上矢印キーだよ！", 40, 120);
 
 function gameLoop(timestamp){
 
@@ -61,7 +63,9 @@ function gameLoop(timestamp){
     console.log(i);
     bomb[i].update(deltaTime);
     bomb[i].draw(ctx);
+    //接触判定
     if(bomb[i].checkHit(dino.position.x + dino.r, dino.position.y + dino.r, dino.r, bomb[i].position.x + bomb[i].r, bomb[i].position.y + bomb[i].r, bomb[i].r)){
+      //接触したら効果音再生
       var playbomb = bomb[i].audio.play();
       if(playbomb !== undefined) {
         playbomb.then(_ => {
@@ -70,28 +74,8 @@ function gameLoop(timestamp){
           console.log(error);
         });
       }
-      gamestate = true;
-
-      let score = 0;
-      let bomb = [];
-      let lastTime = 0;
-      let counter = 0;
-      let interval = 0;
-
-      let deltaTime = timestamp - lastTime;
-      lastTime = timestamp;
-
-      // Dinoクラスのdrawメソッドを使いたい場合↓の記述
-    dino.update(deltaTime);
-
-    counter += deltaTime;
-    if(counter > interval) {
-      bomb.push(new Bomb(GAME_WIDTH, GAME_HEIGHT));
-      counter = 0;
-      // 1～2秒間隔
-      interval = getRandomInt(1000, 1800);
+      gamestate = false;
     }
-
     ctx.font = "40px sans-serif";
     ctx.fillText("Score："+score, 40, 40);
     if(!gamestate){
@@ -100,11 +84,10 @@ function gameLoop(timestamp){
       ctx.font = "40px sans-serif";
       ctx.fillText("更新ボタンでもう一度チャレンジ♪", 40, 90);
       return;
+      }
     }
     requestAnimationFrame(gameLoop);
-  });
   }
-  requestAnimationFrame(gameLoop);
 
 window.addEventListener('click', () => {
   if (gamestate === true) {
@@ -112,7 +95,7 @@ window.addEventListener('click', () => {
   }
   gamestate = true;
   requestAnimationFrame(gameLoop);
-})
+});
 
 
 
