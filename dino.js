@@ -50,10 +50,9 @@ export class Dino {
   // 描写を実行する関数
   draw(ctx){
     // 画像、x座標、y座標、幅、高さ
-    // ctx.beginPath();
-    // ctx.arc(this.position.x+this.r,this.position.y+this.r,this.r,0,2*Math.PI);
+    ctx.beginPath();
+    ctx.arc(this.position.x+this.r,this.position.y+this.r,this.r,0,2*Math.PI);
     // ctx.stroke();
     ctx.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
-
   }
 }

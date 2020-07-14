@@ -14,7 +14,8 @@ export class Bomb {
     this.audio = new Audio("./punch.mp3");
 
   }
-  // 画面外の障害物をはいてるから削除するメソッド
+  // 画面外の障害物をはいてるから削除するためのメソッド
+  // booleanで返す
   offScreen(){
     if(this.position.x <= -this.width){
       return true;
@@ -32,13 +33,11 @@ export class Bomb {
   // 右から左への移動
   update(deltaTime) {
     this.position.x -= this.speed;
-
   }
   draw(ctx) {
-    // ctx.beginPath();
-    // ctx.arc(this.position.x+this.r,this.position.y+this.r,this.r,0,2*Math.PI);
+    ctx.beginPath();
+    ctx.arc(this.position.x+this.r,this.position.y+this.r,this.r,0,2*Math.PI);
     // ctx.stroke();
     ctx.drawImage(this.image,this.position.x,this.position.y,this.width,this.height);
-
   }
 }
