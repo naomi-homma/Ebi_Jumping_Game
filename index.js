@@ -76,6 +76,11 @@ function gameLoop(timestamp){
       }
       gamestate = false;
     }
+
+    if (bomb[i].offScreen()) {
+      score++;
+      bomb.shift();
+    }
     ctx.font = "40px sans-serif";
     ctx.fillText("Score："+score, 40, 40);
     if(!gamestate){
