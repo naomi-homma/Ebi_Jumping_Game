@@ -13,8 +13,8 @@ const GAME_WIDTH = 800;
 const GAME_HEIGHT = 500;
 
 let backImg = document.getElementById("img_back");
-// let gamestate = true;
 let gamestate = false;
+
 let score = 0;
 
 // ゲームループ関数の作成
@@ -70,14 +70,28 @@ function gameLoop(timestamp){
           console.log(error);
         });
       }
-      console.log("HIT");
-      gamestate = false;
+      gamestate = true;
+
+      let score = 0;
+      let bomb = [];
+      let lastTime = 0;
+      let counter = 0;
+      let interval = 0;
+
+      let deltaTime = timestamp - lastTime;
+      lastTime = timestamp;
+
+      // Dinoクラスのdrawメソッドを使いたい場合↓の記述
+    dino.update(deltaTime);
+
+    counter += deltaTime;
+    if(counter > interval) {
+      bomb.push(new Bomb(GAME_WIDTH, GAME_HEIGHT));
+      counter = 0;
+      // 1～2秒間隔
+      interval = getRandomInt(1000, 1800);
     }
-    // i番目のbombを1つ取り除く
-    if(bomb[i].offScreen()){
-      score++;
-      bomb.splice(i, 1);
-    }
+
     ctx.font = "40px sans-serif";
     ctx.fillText("Score："+score, 40, 40);
     if(!gamestate){
@@ -87,9 +101,10 @@ function gameLoop(timestamp){
       ctx.fillText("更新ボタンでもう一度チャレンジ♪", 40, 90);
       return;
     }
+    requestAnimationFrame(gameLoop);
+  });
   }
   requestAnimationFrame(gameLoop);
-}
 
 window.addEventListener('click', () => {
   if (gamestate === true) {
@@ -98,7 +113,6 @@ window.addEventListener('click', () => {
   gamestate = true;
   requestAnimationFrame(gameLoop);
 })
-
 
 
 
